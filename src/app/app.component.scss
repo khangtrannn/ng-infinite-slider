@@ -1,0 +1,116 @@
+main {
+  position: relative;
+  height: 100vh;
+}
+
+.slider {
+  --width: 120px;
+  --height: 160px;
+  --quantity: 10;
+  --gap: 0.25rem;
+  --time: 20s;
+  width: 100%;
+  height: var(--height);
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 10% 90%, transparent);
+  margin-bottom: 3rem;
+
+  &:hover {
+    .item {
+      animation-play-state: paused !important;
+      filter: grayscale(1);
+    }
+  }
+
+  .item:hover {
+    filter: grayscale(0);
+  }
+
+  &-list {
+    display: flex;
+    gap: 0.25rem;
+    position: relative;
+    width: 100%;
+    min-width: calc(
+      var(--width) * var(--quantity) + (var(--quantity) - 1) * var(--gap)
+    );
+
+    .item {
+      position: absolute;
+      width: var(--width);
+      height: var(--height);
+      left: 100%;
+      transition: filter 0.5s;
+      animation: autoRun var(--time) linear infinite;
+      animation-delay: calc(
+        (var(--time) / var(--quantity)) * (var(--position) - 1)
+      );
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+}
+
+@keyframes autoRun {
+  from {
+    left: 100%;
+  }
+
+  to {
+    left: calc(var(--height) * -1);
+  }
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 0.25rem;
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+
+  .item {
+    transition: 0.5s;
+    filter: brightness(0);
+
+    &:hover {
+      filter: brightness(1);
+      transform: translateZ(200px);
+
+      & + * {
+        filter: brightness(0.6);
+        transform: translateZ(150px) rotateY(40deg);
+
+        & + * {
+          filter: brightness(0.4);
+          transform: translateZ(70px) rotateY(20deg);
+
+          & + * {
+            filter: brightness(0.2);
+            transform: translateZ(30px) rotateY(10deg);
+          }
+        }
+      }
+    }
+
+    &:has(+ *:hover) {
+      filter: brightness(0.6);
+      transform: translateZ(150px) rotateY(-40deg);
+    }
+
+    &:has(+ * + *:hover) {
+      filter: brightness(0.4);
+      transform: translateZ(70px) rotateY(-20deg);
+    }
+
+    &:has(+ * + * + *:hover) {
+      filter: brightness(0.2);
+      transform: translateZ(30px) rotateY(-10deg);
+    }
+
+    img {
+      width: 100%;
+    }
+  }
+}
